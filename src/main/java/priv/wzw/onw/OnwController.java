@@ -42,10 +42,10 @@ public class OnwController {
     }
 
     @PostMapping("/player/{userId}/room")
-    public String createRoom(@PathVariable("userId") String userId) {
+    public ApiResponse<String> createRoom(@PathVariable("userId") String userId) {
         Player player = playerManager.getOrCreate(userId);
         Room room = roomManager.createRoom(player, Arrays.asList(RoleCard.values()));
-        return room.getId();
+        return ApiResponse.success(room.getId());
     }
 
     @PostMapping("/player/{userId}/room/{roomId}")
@@ -78,14 +78,21 @@ public class OnwController {
         return ApiResponse.success(seatData);
     }
 
-    @Deprecated
     @DeleteMapping("/player/{userId}/seat")
-    public void leaveSeat(@PathVariable("userId") String userId) {
+    public ApiResponse<Void> leaveSeat(@PathVariable("userId") String userId) {
         Player player = playerManager.get(userId);
         if (player == null) {
-            return;
+            return ApiResponse.fail("player not exist");
+        }
+        Room room = roomManager.lookup(player.getRoomId());
+        if (room == null) {
+            return ApiResponse.fail("room not exist");
+        }
+        if (room.getGameStateMachine().getCurrentState() != GameState.INIT) {
+            return ApiResponse.fail("can only leave seat in prepare phase");
         }
         player.leaveSeat();
+        return ApiResponse.success();
     }
 
     @PutMapping("/player/{userId}/ready/{ready}")
@@ -115,7 +122,7 @@ public class OnwController {
             return ApiResponse.fail("room not exist");
         }
         if (room.getGameStateMachine().getCurrentState() != GameState.WEREWOLF_TURN) {
-            log.info("player {} game is not in werewolf turn", userId);
+            log.info("player {} game is not in werewolf turn, current state: {}", userId, room.getGameStateMachine().getCurrentState());
             return ApiResponse.fail("game is not in werewolf turn");
         }
 

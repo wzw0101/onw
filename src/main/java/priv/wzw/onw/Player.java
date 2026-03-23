@@ -101,7 +101,9 @@ public class Player {
             return;
         }
         room.leaveSeat(userId);
-        // TODO ROOM_STATE_CHANGE_EVENT
+
+        RoomStateChangeEvent event = new RoomStateChangeEvent(converters.toDTO(room));
+        template.convertAndSend("/topic/room/" + roomId, jacksonUtils.toJson(event));
     }
 
     public void updateReadyState(boolean ready) {

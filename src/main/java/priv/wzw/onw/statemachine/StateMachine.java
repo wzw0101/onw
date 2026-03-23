@@ -21,7 +21,9 @@ public class StateMachine<S extends Enum<S>, E extends Enum<E>, C extends StateM
                 .filter(transition -> transition.canHandle(currentState, event, context))
                 .findFirst()
                 .ifPresent(transition -> {
-                    currentState = transition.handle(currentState, event, context);
+                    S target = transition.getTarget();
+                    currentState = target;
+                    transition.executeAction(context);
                     context.setTransitioned(true);
                 });
     }

@@ -1,5 +1,6 @@
 package priv.wzw.onw.statemachine;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.EnumSet;
@@ -10,6 +11,7 @@ import java.util.function.Predicate;
 public class Transition<S extends Enum<S>, E extends Enum<E>, C extends StateMachineContext> {
     private final EnumSet<S> sourceSet;
     private final E event;
+    @Getter
     private final S target;
     private final Predicate<C> predicate;
     private final Consumer<C> onAccept;
@@ -45,11 +47,7 @@ public class Transition<S extends Enum<S>, E extends Enum<E>, C extends StateMac
         return this.sourceSet.contains(source) && this.event == event && predicate.test(context);
     }
 
-    public final S handle(S source, E event, C context) {
-        if (!canHandle(source, event, context)) {
-            return null;
-        }
+    public void executeAction(C context) {
         onAccept.accept(context);
-        return target;
     }
 }

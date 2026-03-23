@@ -12,7 +12,6 @@ public abstract class AbstractRoomEvent {
 
     public enum Type {
         ROOM_STATE_CHANGED,
-        PHASE_CHANGED,
         ;
     }
 }
