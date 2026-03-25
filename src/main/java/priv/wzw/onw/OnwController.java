@@ -352,6 +352,25 @@ public class OnwController {
         return room.getSeats().get(room.getMostVotedTarget());
     }
 
+    @PostMapping("/player/{userId}/turn-end")
+    public ApiResponse<Void> turnEnd(@PathVariable("userId") String userId) {
+        Player player = playerManager.get(userId);
+        if (player == null) {
+            return ApiResponse.fail("player not exist");
+        }
+        Room room = roomManager.lookup(player.getRoomId());
+        if (room == null) {
+            return ApiResponse.fail("room not exist");
+        }
+        GameState currentState = room.getGameStateMachine().getCurrentState();
+        if (!currentState.name().endsWith("_TURN") && !currentState.name().endsWith("_DONE")) {
+            return ApiResponse.fail("current state is not a turn or done state: " + currentState);
+        }
+        GameContext context = GameContext.builder().room(room).build();
+        room.getGameStateMachine().sendEvent(GameEvent.TURN_END, context);
+        return ApiResponse.success();
+    }
+
     @PostMapping("/player/{userId}/restart")
     public ApiResponse<Void> restart(@PathVariable("userId") String userId) {
         Player player = playerManager.get(userId);

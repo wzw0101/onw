@@ -34,7 +34,7 @@ public class GameTransitionConfig {
     @Bean
     Transition<GameState, GameEvent, GameContext> startedToWerewolfTurn() {
         return new Transition<>(GameState.STARTED, GameEvent.START, GameState.WEREWOLF_TURN,
-                acceptAndScheduleTurnEnd());
+                sendRoomStateEvent());
     }
 
     @Bean
@@ -55,7 +55,7 @@ public class GameTransitionConfig {
     Transition<GameState, GameEvent, GameContext> werewolfToMinionTurn() {
         return new Transition<>(EnumSet.of(GameState.WEREWOLF_TURN, GameState.WEREWOLF_DONE),
                 GameEvent.TURN_END, GameState.MINION_TURN,
-                acceptAndScheduleTurnEnd());
+                sendRoomStateEvent());
     }
 
     @Bean
@@ -67,7 +67,7 @@ public class GameTransitionConfig {
     Transition<GameState, GameEvent, GameContext> minionToSeerTurn() {
         return new Transition<>(EnumSet.of(GameState.MINION_TURN, GameState.MINION_DONE),
                 GameEvent.TURN_END, GameState.SEER_TURN,
-                acceptAndScheduleTurnEnd());
+                sendRoomStateEvent());
     }
 
     @Bean
@@ -79,7 +79,7 @@ public class GameTransitionConfig {
     Transition<GameState, GameEvent, GameContext> seerToRobberTurn() {
         return new Transition<>(EnumSet.of(GameState.SEER_TURN, GameState.SEER_DONE),
                 GameEvent.TURN_END, GameState.ROBBER_TURN,
-                acceptAndScheduleTurnEnd());
+                sendRoomStateEvent());
     }
 
     @Bean
@@ -96,7 +96,7 @@ public class GameTransitionConfig {
     Transition<GameState, GameEvent, GameContext> robberToTroublemakerTurn() {
         return new Transition<>(EnumSet.of(GameState.ROBBER_TURN, GameState.ROBBER_DONE),
                 GameEvent.TURN_END, GameState.TROUBLEMAKER_TURN,
-                acceptAndScheduleTurnEnd());
+                sendRoomStateEvent());
     }
 
     @Bean
@@ -114,7 +114,7 @@ public class GameTransitionConfig {
     Transition<GameState, GameEvent, GameContext> troublemakerToDrunkTurn() {
         return new Transition<>(EnumSet.of(GameState.TROUBLEMAKER_TURN, GameState.TROUBLEMAKER_DONE),
                 GameEvent.TURN_END, GameState.DRUNK_TURN,
-                acceptAndScheduleTurnEnd());
+                sendRoomStateEvent());
     }
 
     @Bean
@@ -134,7 +134,7 @@ public class GameTransitionConfig {
     Transition<GameState, GameEvent, GameContext> drunkToInsomniacTurn() {
         return new Transition<>(EnumSet.of(GameState.DRUNK_TURN, GameState.DRUNK_DONE),
                 GameEvent.TURN_END, GameState.INSOMNIAC_TURN,
-                acceptAndScheduleTurnEnd());
+                sendRoomStateEvent());
     }
 
     @Bean
@@ -193,10 +193,6 @@ public class GameTransitionConfig {
 
     }
 
-
-    private Consumer<GameContext> acceptAndScheduleTurnEnd() {
-        return acceptAndScheduleNext(GameEvent.TURN_END, 20);
-    }
 
     private Consumer<GameContext> acceptAndScheduleNext(GameEvent nextEvent, int delaySeconds) {
         return gameContext -> {
