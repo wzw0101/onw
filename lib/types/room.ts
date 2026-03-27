@@ -1,4 +1,4 @@
-import type { PlayerColor } from './common';
+import type { PlayerColor, RoleCard } from './common';
 import { GamePhase } from './game';
 
 export interface RoomInfo {
@@ -9,4 +9,5 @@ export interface RoomInfo {
     playerColorMap: { [index: string]: PlayerColor };
     hostPlayer: string;
     gamePhase: GamePhase;
+    playerInitialCards: Array<RoleCard>;
 }

@@ -3,6 +3,7 @@
 import React from 'react';
 import { GamePhase, RoleCard, RoomInfo } from '@/lib/types';
 import PreparePhase from './phases/PreparePhase';
+import GameStartPhase from './phases/GameStartPhase';
 import WerewolfPhase from './phases/WerewolfPhase';
 import MinionPhase from './phases/MinionPhase';
 import SeerPhase from './phases/SeerPhase';
@@ -28,6 +29,9 @@ export default function GameContent(p: GameContentProps) {
             case "PREPARE":
                 return <PreparePhase roomInfo={p.roomInfo} playerId={p.playerId} playerSeatNum={p.playerSeatNum}
                     initialRole={p.initialRole} setInitialRole={p.setInitialRole} />;
+
+            case "GAME_START":
+                return <GameStartPhase roomInfo={p.roomInfo} playerId={p.playerId} />;
 
             case "WEREWOLF_TURN":
                 return <WerewolfPhase roomInfo={p.roomInfo} playerId={p.playerId} initialRole={p.initialRole} />;
