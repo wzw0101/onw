@@ -17,8 +17,22 @@ export default function TroublemakerPhase({ roomInfo, playerId, initialRole }: T
     const [selected, setSelected] = React.useState(false);
     const [turnEnding, setTurnEnding] = React.useState(false);
 
+    const handleCardClick = (index: number) => {
+        if (selected) return; // 确认后锁定
+
+        if (index === selectedIndex) {
+            setSelectedIndex(-1); // 反选第一张
+        } else if (index === selectedIndex2) {
+            setSelectedIndex2(-1); // 反选第二张
+        } else if (selectedIndex < 0) {
+            setSelectedIndex(index); // 第一张未选，选中第一张
+        } else {
+            setSelectedIndex2(index); // 其他情况选第二张
+        }
+    };
+
     if (initialRole !== "TROUBLEMAKER") {
-        return <WaitingPhase title="🃏 Troublemaker Turn" description="Troublemaker is taking action..." />;
+        return <WaitingPhase title="⏳ 请稍候" description="等待其他玩家操作中..." />;
     }
 
     return (
@@ -32,11 +46,7 @@ export default function TroublemakerPhase({ roomInfo, playerId, initialRole }: T
                     return (
                         <div key={index} className={`p-4 rounded-lg border-2 cursor-pointer transition-colors text-center
                             ${isSelected ? "border-primary bg-primary/20" : "border-base-content/30 hover:border-primary"}`}
-                            onClick={() => {
-                                if (selected) return;
-                                if (selectedIndex < 0) setSelectedIndex(index);
-                                else if (selectedIndex2 < 0 && index !== selectedIndex) setSelectedIndex2(index);
-                            }}>
+                            onClick={() => handleCardClick(index)}>
                             <div className="font-semibold">{seatPlayerId}</div>
                             {isSelected && (
                                 <div className="text-xs text-primary mt-1">
