@@ -338,18 +338,23 @@ public class OnwController {
     }
 
     @GetMapping("/player/{userId}/vote/result")
-    public String getVoteResult(@PathVariable("userId") String userId) {
-        Player player = playerManager.getOrCreate(userId);
+    public ApiResponse<String> getVoteResult(@PathVariable("userId") String userId) {
+        Player player = playerManager.get(userId);
+        if (player == null) {
+            return ApiResponse.fail("player not exist");
+        }
         Room room = roomManager.lookup(player.getRoomId());
         if (room == null) {
-            log.info("player {} room not exist", userId);
-            return null;
+            return ApiResponse.fail("room not exist");
         }
         if (room.getGameStateMachine().getCurrentState() != GameState.END) {
-            log.info("Game not ends, cannot get vote result");
-            return null;
+            return ApiResponse.fail("game not ends");
         }
-        return room.getSeats().get(room.getMostVotedTarget());
+        int target = room.getMostVotedTarget();
+        if (target < 0 || target >= room.getSeats().size()) {
+            return ApiResponse.fail("no valid vote result");
+        }
+        return ApiResponse.success(room.getSeats().get(target));
     }
 
     @PostMapping("/player/{userId}/turn-end")
@@ -364,10 +369,14 @@ public class OnwController {
         }
         GameState currentState = room.getGameStateMachine().getCurrentState();
         if (!currentState.name().endsWith("_TURN") && !currentState.name().endsWith("_DONE")) {
+            log.info("player {} turn-end rejected, current state: {}", userId, currentState);
             return ApiResponse.fail("current state is not a turn or done state: " + currentState);
         }
+        log.info("player {} sending TURN_END, current state: {}, roomId={}", userId, currentState, room.getId());
         GameContext context = GameContext.builder().room(room).build();
         room.getGameStateMachine().sendEvent(GameEvent.TURN_END, context);
+        GameState newState = room.getGameStateMachine().getCurrentState();
+        log.info("player {} TURN_END processed, new state: {}, transitioned={}", userId, newState, context.isTransitioned());
         return ApiResponse.success();
     }
 
