@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import priv.wzw.onw.GamePhase;
 import priv.wzw.onw.PlayerColor;
+import priv.wzw.onw.RoleCard;
 
 import java.util.List;
 import java.util.Map;
@@ -19,4 +20,5 @@ public class RoomDTO {
     private GamePhase gamePhase;
     private Map<String, PlayerColor> playerColorMap;
     private String hostPlayer;
+    private List<RoleCard> playerInitialCards;
 }

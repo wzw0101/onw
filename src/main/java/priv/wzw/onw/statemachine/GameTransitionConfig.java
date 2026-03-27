@@ -34,7 +34,7 @@ public class GameTransitionConfig {
     @Bean
     Transition<GameState, GameEvent, GameContext> startedToWerewolfTurn() {
         return new Transition<>(GameState.STARTED, GameEvent.START, GameState.WEREWOLF_TURN,
-                sendRoomStateEvent());
+                sendRoomStateAndAutoSkip(RoleCard.WEREWOLF));
     }
 
     @Bean
@@ -55,7 +55,7 @@ public class GameTransitionConfig {
     Transition<GameState, GameEvent, GameContext> werewolfToMinionTurn() {
         return new Transition<>(EnumSet.of(GameState.WEREWOLF_TURN, GameState.WEREWOLF_DONE),
                 GameEvent.TURN_END, GameState.MINION_TURN,
-                sendRoomStateEvent());
+                sendRoomStateAndAutoSkip(RoleCard.MINION));
     }
 
     @Bean
@@ -67,7 +67,7 @@ public class GameTransitionConfig {
     Transition<GameState, GameEvent, GameContext> minionToSeerTurn() {
         return new Transition<>(EnumSet.of(GameState.MINION_TURN, GameState.MINION_DONE),
                 GameEvent.TURN_END, GameState.SEER_TURN,
-                sendRoomStateEvent());
+                sendRoomStateAndAutoSkip(RoleCard.SEER));
     }
 
     @Bean
@@ -79,7 +79,7 @@ public class GameTransitionConfig {
     Transition<GameState, GameEvent, GameContext> seerToRobberTurn() {
         return new Transition<>(EnumSet.of(GameState.SEER_TURN, GameState.SEER_DONE),
                 GameEvent.TURN_END, GameState.ROBBER_TURN,
-                sendRoomStateEvent());
+                sendRoomStateAndAutoSkip(RoleCard.ROBBER));
     }
 
     @Bean
@@ -96,7 +96,7 @@ public class GameTransitionConfig {
     Transition<GameState, GameEvent, GameContext> robberToTroublemakerTurn() {
         return new Transition<>(EnumSet.of(GameState.ROBBER_TURN, GameState.ROBBER_DONE),
                 GameEvent.TURN_END, GameState.TROUBLEMAKER_TURN,
-                sendRoomStateEvent());
+                sendRoomStateAndAutoSkip(RoleCard.TROUBLEMAKER));
     }
 
     @Bean
@@ -114,7 +114,7 @@ public class GameTransitionConfig {
     Transition<GameState, GameEvent, GameContext> troublemakerToDrunkTurn() {
         return new Transition<>(EnumSet.of(GameState.TROUBLEMAKER_TURN, GameState.TROUBLEMAKER_DONE),
                 GameEvent.TURN_END, GameState.DRUNK_TURN,
-                sendRoomStateEvent());
+                sendRoomStateAndAutoSkip(RoleCard.DRUNK));
     }
 
     @Bean
@@ -134,7 +134,7 @@ public class GameTransitionConfig {
     Transition<GameState, GameEvent, GameContext> drunkToInsomniacTurn() {
         return new Transition<>(EnumSet.of(GameState.DRUNK_TURN, GameState.DRUNK_DONE),
                 GameEvent.TURN_END, GameState.INSOMNIAC_TURN,
-                sendRoomStateEvent());
+                sendRoomStateAndAutoSkip(RoleCard.INSOMNIAC));
     }
 
     @Bean
@@ -215,6 +215,22 @@ public class GameTransitionConfig {
             RoomDTO dto = converters.toDTO(room);
             RoomStateChangeEvent event = new RoomStateChangeEvent(dto);
             template.convertAndSend("/topic/room/" + room.getId(), jacksonUtils.toJson(event));
+        };
+    }
+
+    private Consumer<GameContext> sendRoomStateAndAutoSkip(RoleCard activeRole) {
+        return gameContext -> {
+            Room room = gameContext.getRoom();
+            RoomDTO dto = converters.toDTO(room);
+            RoomStateChangeEvent event = new RoomStateChangeEvent(dto);
+            template.convertAndSend("/topic/room/" + room.getId(), jacksonUtils.toJson(event));
+            if (!room.getPlayerCards().contains(activeRole)) {
+                log.info("Auto-skipping turn for {} (not in player cards, in center pile)", activeRole);
+                GameStateMachine gameStateMachine = room.getGameStateMachine();
+                scheduler.schedule(
+                        () -> gameStateMachine.sendEvent(GameEvent.TURN_END, gameContext),
+                        500, TimeUnit.MILLISECONDS);
+            }
         };
     }
 }
