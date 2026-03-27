@@ -18,7 +18,7 @@ export default function RobberPhase({ roomInfo, playerId, initialRole }: RobberP
     const [turnEnding, setTurnEnding] = React.useState(false);
 
     if (initialRole !== "ROBBER") {
-        return <WaitingPhase title="🎭 Robber Turn" description="Robber is choosing a target..." />;
+        return <WaitingPhase title="⏳ 请稍候" description="等待其他玩家操作中..." />;
     }
 
     return (

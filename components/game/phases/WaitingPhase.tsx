@@ -9,10 +9,11 @@ interface WaitingPhaseProps {
 
 export default function WaitingPhase({ title, description }: WaitingPhaseProps) {
     return (
-        <div className="text-center space-y-4">
+        <div className="flex flex-col items-center justify-center py-12 space-y-4">
+            <div className="text-4xl">⏳</div>
             <p className="text-xl font-bold text-primary">{title}</p>
-            <p className="text-base-content/60">{description}</p>
-            <p className="text-sm text-base-content/40">Please wait for the phase to end.</p>
+            <p className="text-base text-base-content/60">{description}</p>
+            <span className="loading loading-dots loading-md text-primary"></span>
         </div>
     );
 }
