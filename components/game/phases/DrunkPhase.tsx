@@ -16,7 +16,7 @@ export default function DrunkPhase({ playerId, initialRole }: DrunkPhaseProps) {
     const [turnEnding, setTurnEnding] = React.useState(false);
 
     if (initialRole !== "DRUNK") {
-        return <WaitingPhase title="🥃 Drunk Turn" description="Drunk is swapping cards..." />;
+        return <WaitingPhase title="⏳ 请稍候" description="等待其他玩家操作中..." />;
     }
 
     const centerCards = ["Card 1", "Card 2", "Card 3"];

@@ -18,7 +18,7 @@ export default function SeerPhase({ roomInfo, playerId, initialRole }: SeerPhase
     const [turnEnding, setTurnEnding] = React.useState(false);
 
     if (initialRole !== "SEER") {
-        return <WaitingPhase title="🔮 Seer Turn" description="Seer is investigating..." />;
+        return <WaitingPhase title="⏳ 请稍候" description="等待其他玩家操作中..." />;
     }
 
     return (

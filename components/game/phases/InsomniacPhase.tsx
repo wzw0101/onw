@@ -22,7 +22,7 @@ export default function InsomniacPhase({ playerId, initialRole }: InsomniacPhase
     }, []);
 
     if (initialRole !== "INSOMNIAC") {
-        return <WaitingPhase title="😴 Insomniac Turn" description="Insomniac is checking their role..." />;
+        return <WaitingPhase title="⏳ 请稍候" description="等待其他玩家操作中..." />;
     }
 
     return (

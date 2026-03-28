@@ -23,7 +23,7 @@ export default function MinionPhase({ roomInfo, playerId, initialRole }: MinionP
     }, []);
 
     if (initialRole !== "MINION") {
-        return <WaitingPhase title="🤡 Minion Turn" description="Minion is checking for werewolves..." />;
+        return <WaitingPhase title="⏳ 请稍候" description="等待其他玩家操作中..." />;
     }
 
     return (
