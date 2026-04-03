@@ -12,12 +12,12 @@ export const PLAYER_COLORS: Record<PlayerColor, string> = {
 };
 
 export const ROLE_CONFIGS: Record<RoleCard, { icon: string; name: string }> = {
-    DRUNK: { icon: "🥃", name: "酒鬼" },
-    INSOMNIAC: { icon: "😴", name: "失眠者" },
-    MINION: { icon: "🤡", name: "爪牙" },
-    ROBBER: { icon: "🎭", name: "强盗" },
+    DRUNK: { icon: "🍺", name: "酒鬼" },
+    INSOMNIAC: { icon: "🦉", name: "失眠者" },
+    MINION: { icon: "🐾", name: "爪牙" },
+    ROBBER: { icon: "🥷", name: "强盗" },
     SEER: { icon: "🔮", name: "预言家" },
-    TROUBLEMAKER: { icon: "🎪", name: "捣蛋鬼" },
+    TROUBLEMAKER: { icon: "🤡", name: "捣蛋鬼" },
     VILLAGER: { icon: "👱", name: "村民" },
     WEREWOLF: { icon: "🐺", name: "狼人" },
 };
