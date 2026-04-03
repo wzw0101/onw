@@ -8,3 +8,8 @@ export interface RoomChangedMessageBody {
     eventType: "ROOM_STATE_CHANGED";
     data: RoomInfo;
 }
+
+export interface VoteDistribution {
+    mostVotedPlayer: string | null;
+    voteCounts: number[];  // 每个座位的得票数
+}
