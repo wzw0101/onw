@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import priv.wzw.onw.dto.VoteDistributionDTO;
 import priv.wzw.onw.statemachine.GameContext;
 import priv.wzw.onw.statemachine.GameStateMachine;
 
@@ -161,5 +162,36 @@ public class Room {
             }
         }
         return maxCountTarget;
+    }
+
+    public VoteDistributionDTO getVoteDistribution() {
+        // 计算每个座位的得票数
+        List<Integer> voteCounts = new ArrayList<>(seats.size());
+        for (int i = 0; i < seats.size(); i += 1) {
+            voteCounts.add(0);
+        }
+        for (int i = 0; i < votes.size(); i += 1) {
+            int target = votes.get(i).get();
+            if (target >= 0 && target < voteCounts.size()) {
+                voteCounts.set(target, voteCounts.get(target) + 1);
+            }
+        }
+
+        // 找出得票最多的玩家
+        int maxCount = -1;
+        int maxCountTarget = -1;
+        for (int i = 0; i < voteCounts.size(); i += 1) {
+            if (voteCounts.get(i) > maxCount) {
+                maxCount = voteCounts.get(i);
+                maxCountTarget = i;
+            }
+        }
+
+        String mostVotedPlayer = maxCountTarget >= 0 ? seats.get(maxCountTarget) : null;
+
+        return VoteDistributionDTO.builder()
+                .mostVotedPlayer(mostVotedPlayer)
+                .voteCounts(voteCounts)
+                .build();
     }
 }

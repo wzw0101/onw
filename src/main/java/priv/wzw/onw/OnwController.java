@@ -342,7 +342,7 @@ public class OnwController {
     }
 
     @GetMapping("/player/{userId}/vote/result")
-    public ApiResponse<String> getVoteResult(@PathVariable("userId") String userId) {
+    public ApiResponse<VoteDistributionDTO> getVoteResult(@PathVariable("userId") String userId) {
         Player player = playerManager.get(userId);
         if (player == null) {
             return ApiResponse.fail("player not exist");
@@ -354,11 +354,7 @@ public class OnwController {
         if (room.getGameStateMachine().getCurrentState() != GameState.END) {
             return ApiResponse.fail("game not ends");
         }
-        int target = room.getMostVotedTarget();
-        if (target < 0 || target >= room.getSeats().size()) {
-            return ApiResponse.fail("no valid vote result");
-        }
-        return ApiResponse.success(room.getSeats().get(target));
+        return ApiResponse.success(room.getVoteDistribution());
     }
 
     @PostMapping("/player/{userId}/turn-end")
