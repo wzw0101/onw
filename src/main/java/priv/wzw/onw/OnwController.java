@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import priv.wzw.onw.dto.*;
 import priv.wzw.onw.statemachine.GameContext;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -42,9 +42,13 @@ public class OnwController {
     }
 
     @PostMapping("/player/{userId}/room")
-    public ApiResponse<String> createRoom(@PathVariable("userId") String userId) {
+    public ApiResponse<String> createRoom(@PathVariable("userId") String userId,
+                                          @RequestBody List<String> cardNames) {
         Player player = playerManager.getOrCreate(userId);
-        Room room = roomManager.createRoom(player, Arrays.asList(RoleCard.values()));
+        List<RoleCard> selectedCards = cardNames.stream()
+                .map(RoleCard::valueOf)
+                .collect(Collectors.toList());
+        Room room = roomManager.createRoom(player, selectedCards);
         return ApiResponse.success(room.getId());
     }
 
