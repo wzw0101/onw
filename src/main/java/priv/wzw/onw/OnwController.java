@@ -380,6 +380,24 @@ public class OnwController {
         return ApiResponse.success();
     }
 
+    @GetMapping("/player/{userId}/initialRole")
+    public ApiResponse<SeatData> getInitialRole(@PathVariable("userId") String userId) {
+        Player player = playerManager.get(userId);
+        if (player == null) {
+            return ApiResponse.fail("player not exist");
+        }
+        Room room = roomManager.lookup(player.getRoomId());
+        if (room == null) {
+            return ApiResponse.fail("room not exist");
+        }
+        int seatNum = room.getSeats().indexOf(userId);
+        if (seatNum < 0) {
+            return ApiResponse.fail("player not seated");
+        }
+        SeatData seatData = SeatData.builder().initialRole(room.getPlayerInitialCards().get(seatNum)).build();
+        return ApiResponse.success(seatData);
+    }
+
     @PostMapping("/player/{userId}/restart")
     public ApiResponse<Void> restart(@PathVariable("userId") String userId) {
         Player player = playerManager.get(userId);
