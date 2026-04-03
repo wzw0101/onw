@@ -6,8 +6,8 @@ export const roomApi = {
     get: (playerId: string) =>
         apiClient.get<RoomInfo>(`/player/${playerId}/room`),
 
-    create: (playerId: string) =>
-        apiClient.post(`/player/${playerId}/room`),
+    create: (playerId: string, cardNames: string[]) =>
+        apiClient.post(`/player/${playerId}/room`, cardNames),
 
     join: (playerId: string, roomId: string) =>
         apiClient.post(`/player/${playerId}/room/${roomId}`),
