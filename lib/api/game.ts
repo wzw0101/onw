@@ -2,6 +2,7 @@ import { apiClient } from './client';
 import type {
     GetWerewolfData, GetMinionData, GetSeerData,
     GetInsomniacData, PutRobberData, ResponseBody,
+    VoteDistribution,
 } from '../types';
 
 export const gameApi = {
@@ -48,7 +49,7 @@ export const gameApi = {
         apiClient.post(`/player/${playerId}/vote/done`),
 
     getVoteResult: (playerId: string) =>
-        apiClient.get<string>(`/player/${playerId}/vote/result`),
+        apiClient.get<VoteDistribution>(`/player/${playerId}/vote/result`),
 
     // 行动确认
     turnEnd: (playerId: string) =>

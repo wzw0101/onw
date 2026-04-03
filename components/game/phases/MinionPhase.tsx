@@ -35,7 +35,11 @@ export default function MinionPhase({ roomInfo, playerId, initialRole }: MinionP
                     {minionInfo.werewolfIndex !== null ? (
                         <div className="p-2 bg-orange-500/20 rounded">{roomInfo.seats[minionInfo.werewolfIndex]}</div>
                     ) : (
-                        <p className="p-2">There are no werewolves in this round</p>
+                        <div className="p-4 bg-warning/20 rounded-lg border-2 border-warning text-center">
+                            <p className="text-2xl mb-2">⚠️</p>
+                            <p className="text-lg font-bold text-warning">本轮没有狼人！</p>
+                            <p className="text-sm text-base-content/60 mt-1">所有狼人都在中央牌堆中</p>
+                        </div>
                     )}
                 </div>
             ) : <p>Loading...</p>}
