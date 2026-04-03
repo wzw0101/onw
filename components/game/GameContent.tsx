@@ -31,7 +31,7 @@ export default function GameContent(p: GameContentProps) {
                     initialRole={p.initialRole} setInitialRole={p.setInitialRole} />;
 
             case "GAME_START":
-                return <GameStartPhase roomInfo={p.roomInfo} playerId={p.playerId} />;
+                return <GameStartPhase roomInfo={p.roomInfo} playerId={p.playerId} initialRole={p.initialRole} />;
 
             case "WEREWOLF_TURN":
                 return <WerewolfPhase roomInfo={p.roomInfo} playerId={p.playerId} initialRole={p.initialRole} />;

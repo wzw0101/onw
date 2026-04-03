@@ -7,9 +7,10 @@ import { ROLE_CONFIGS } from '@/lib/constants/game';
 interface GameStartPhaseProps {
     roomInfo: RoomInfo;
     playerId: string;
+    initialRole: RoleCard | null;
 }
 
-export default function GameStartPhase({ roomInfo, playerId }: GameStartPhaseProps) {
+export default function GameStartPhase({ roomInfo, playerId, initialRole }: GameStartPhaseProps) {
     return (
         <div className="space-y-6">
             <p className="text-2xl font-bold text-center text-primary">🎮 游戏开始</p>
@@ -17,7 +18,7 @@ export default function GameStartPhase({ roomInfo, playerId }: GameStartPhasePro
                 {roomInfo.seats.map((seatPlayerId, index) => {
                     if (!seatPlayerId) return null;
                     const isSelf = seatPlayerId === playerId;
-                    const role = isSelf ? roomInfo.playerInitialCards?.[index] : null;
+                    const role = isSelf ? initialRole : null;
                     const roleConfig = role ? ROLE_CONFIGS[role] : null;
 
                     return (

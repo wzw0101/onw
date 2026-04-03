@@ -16,4 +16,7 @@ export const playerApi = {
 
     restartGame: (playerId: string) =>
         apiClient.post(`/player/${playerId}/restart`),
+
+    getInitialRole: (playerId: string) =>
+        apiClient.get<SeatData>(`/player/${playerId}/initialRole`),
 };

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { IMessage } from "@stomp/stompjs";
 import { RoleCard, RoomInfo } from "@/lib/types";
 import { RoomChangedMessageBody } from "@/lib/types/game";
-import { roomApi } from "@/lib/api";
+import { roomApi, playerApi } from "@/lib/api";
 import { stompClient } from "@/lib/websocket/manager";
 import GameContent from "@/components/game/GameContent";
 
@@ -57,11 +57,12 @@ function RoomInner({ params, searchParams }: RoomPageProps) {
 
             setRoomInfo(body.data);
 
-            // 从房间数据恢复 initialRole（页面刷新时 PreparePhase 不会渲染）
-            const seatNum = body.data.seats.indexOf(playerId);
-            if (seatNum >= 0 && body.data.playerInitialCards?.[seatNum]) {
-                setInitialRole(body.data.playerInitialCards[seatNum]);
-            }
+            // 通过单独的 API 获取 initialRole
+            playerApi.getInitialRole(playerId).then(roleRes => {
+                if (roleRes.data?.initialRole) {
+                    setInitialRole(roleRes.data.initialRole);
+                }
+            });
 
             // 校验通过，订阅 WebSocket
             const handleMessage = (message: IMessage) => {
