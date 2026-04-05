@@ -50,9 +50,28 @@ jobs:
           IMAGE_TAG: ${{ env.IMAGE_TAG }}
           MAVEN_SETTINGS: settings-ci.xml
         run: |
-          docker compose build
-          docker compose push
-          # 合并缓存：新缓存覆盖旧缓存，未更新的层保留
+          # 确保缓存目录存在
+          mkdir -p /tmp/.buildx-cache /tmp/.buildx-cache-new
+
+          # 构建 backend
+          docker buildx build \
+            --cache-from type=local,src=/tmp/.buildx-cache/backend \
+            --cache-to type=local,dest=/tmp/.buildx-cache-new/backend,mode=max \
+            --build-arg MAVEN_SETTINGS=$MAVEN_SETTINGS \
+            -t $REGISTRY/$NAMESPACE/onw-backend:$IMAGE_TAG \
+            --push \
+            ./backend
+
+          # 构建 frontend
+          docker buildx build \
+            --cache-from type=local,src=/tmp/.buildx-cache/frontend \
+            --cache-to type=local,dest=/tmp/.buildx-cache-new/frontend,mode=max \
+            --build-arg NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-localhost:8080} \
+            -t $REGISTRY/$NAMESPACE/onw-frontend:$IMAGE_TAG \
+            --push \
+            ./frontend
+
+          # 合并缓存
           for svc in backend frontend; do
             if [ -d /tmp/.buildx-cache-new/$svc ]; then
               rm -rf /tmp/.buildx-cache/$svc

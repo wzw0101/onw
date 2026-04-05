@@ -11,9 +11,6 @@ services:
   backend:
     build:
       context: ./backend
-      cache:
-        from: type=local,src=/tmp/.buildx-cache/backend
-        to: type=local,dest=/tmp/.buildx-cache-new/backend,mode=max
       args:
         MAVEN_SETTINGS: ${MAVEN_SETTINGS:-maven-settings.xml}
     image: ${REGISTRY}/${NAMESPACE}/onw-backend:${IMAGE_TAG:-latest}
@@ -25,9 +22,6 @@ services:
   frontend:
     build:
       context: ./frontend
-      cache:
-        from: type=local,src=/tmp/.buildx-cache/frontend
-        to: type=local,dest=/tmp/.buildx-cache-new/frontend,mode=max
       args:
         NPM_REGISTRY: ${NPM_REGISTRY:-}
         NEXT_PUBLIC_API_URL: "${NEXT_PUBLIC_API_URL:-localhost:8080}"
