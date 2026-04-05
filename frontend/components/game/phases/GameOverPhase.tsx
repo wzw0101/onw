@@ -27,7 +27,7 @@ export default function GameOverPhase({ roomInfo, playerId }: GameOverPhaseProps
                             if (res2.code === 0 && res2.data) {
                                 setVoteDistribution(res2.data);
                             } else {
-                                setError(res2.message || 'Failed to load result');
+                                setError(res2.message || '加载结果失败');
                             }
                         });
                     }, 1000);
@@ -50,7 +50,7 @@ export default function GameOverPhase({ roomInfo, playerId }: GameOverPhaseProps
 
     return (
         <div className="space-y-6">
-            <p className="text-lg font-bold text-center">Game Over</p>
+            <p className="text-lg font-bold text-center">🏁 游戏结束</p>
 
             {/* 投票结果柱状图 */}
             <div className="space-y-4">
@@ -112,7 +112,7 @@ export default function GameOverPhase({ roomInfo, playerId }: GameOverPhaseProps
             {roomInfo.hostPlayer === playerId && (
                 <button className="btn btn-primary w-full"
                     onClick={() => playerApi.restartGame(playerId)}>
-                    Restart Game
+                    重新开始
                 </button>
             )}
         </div>

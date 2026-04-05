@@ -37,8 +37,8 @@ export default function TroublemakerPhase({ roomInfo, playerId, initialRole }: T
 
     return (
         <div className="space-y-4">
-            <p className="text-lg font-bold text-center">Troublemaker Turn</p>
-            <p className="text-sm text-base-content/60 mb-4">Choose two players to swap their roles:</p>
+            <p className="text-lg font-bold text-center">🤡 捣蛋鬼回合</p>
+            <p className="text-sm text-base-content/60 mb-4">选择两名玩家交换他们的角色：</p>
             <div className="grid grid-cols-4 gap-4 mb-4">
                 {roomInfo.seats.map((seatPlayerId, index) => {
                     if (!seatPlayerId) return null;
@@ -50,7 +50,7 @@ export default function TroublemakerPhase({ roomInfo, playerId, initialRole }: T
                             <div className="font-semibold">{seatPlayerId}</div>
                             {isSelected && (
                                 <div className="text-xs text-primary mt-1">
-                                    {selectedIndex === index ? "First" : "Second"}
+                                    {selectedIndex === index ? "第一张" : "第二张"}
                                 </div>
                             )}
                         </div>
@@ -62,8 +62,8 @@ export default function TroublemakerPhase({ roomInfo, playerId, initialRole }: T
                     if (selected || selectedIndex < 0 || selectedIndex2 < 0) return;
                     const body = await gameApi.troublemakerSwap(playerId, [selectedIndex, selectedIndex2]);
                     if (body.code === 0) setSelected(true);
-                }}>Confirm Swap</button>
-            {selected && <p className="text-green-600 font-semibold mt-4">Roles have been swapped!</p>}
+                }}>确认交换</button>
+            {selected && <p className="text-green-600 font-semibold mt-4">角色已交换！</p>}
             {selected && (
                 <button className="btn btn-success w-full mt-4" disabled={turnEnding}
                     onClick={async () => {

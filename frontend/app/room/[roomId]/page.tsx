@@ -6,6 +6,7 @@ import { IMessage } from "@stomp/stompjs";
 import { RoleCard, RoomInfo } from "@/lib/types";
 import { RoomChangedMessageBody } from "@/lib/types/game";
 import { roomApi, playerApi } from "@/lib/api";
+import { ROLE_CONFIGS } from "@/lib/constants/game";
 import { stompClient } from "@/lib/websocket/manager";
 import GameContent from "@/components/game/GameContent";
 
@@ -89,7 +90,7 @@ function RoomInner({ params, searchParams }: RoomPageProps) {
             <div className="flex flex-col items-center justify-center min-h-screen gap-4">
                 <p className="text-xl text-error">{error}</p>
                 <button className="btn btn-primary" onClick={() => router.push('/')}>
-                    Back to Home
+                    返回首页
                 </button>
             </div>
         );
@@ -98,7 +99,7 @@ function RoomInner({ params, searchParams }: RoomPageProps) {
     if (!roomInfo) {
         return (
             <div className="flex justify-center items-center min-h-screen">
-                <p className="text-xl">Connecting to room {roomId}...</p>
+                <p className="text-xl">连接房间 {roomId} 中...</p>
             </div>
         );
     }
@@ -111,17 +112,17 @@ function RoomInner({ params, searchParams }: RoomPageProps) {
             <div className="max-w-4xl mx-auto px-4">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-4">
-                        <p className="text-sm text-base-content/60">Room: {roomId}</p>
+                        <p className="text-sm text-base-content/60">房间: {roomId}</p>
                         <p className="text-sm font-semibold">{playerId}</p>
                         {initialRole && gamePhase !== "PREPARE" && (
-                            <span className="badge badge-primary">{initialRole}</span>
+                            <span className="badge badge-primary">{ROLE_CONFIGS[initialRole].icon} {ROLE_CONFIGS[initialRole].name}</span>
                         )}
                     </div>
                     <button className="btn btn-ghost btn-sm" disabled={gamePhase !== "PREPARE"} onClick={async () => {
                         await roomApi.leave(playerId);
                         router.push('/');
                     }}>
-                        Leave Room
+                        离开房间
                     </button>
                 </div>
 

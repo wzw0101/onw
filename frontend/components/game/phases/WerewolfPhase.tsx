@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { HTTP_PREFIX } from '@/lib/constants';
+import { ROLE_CONFIGS } from '@/lib/constants/game';
 import { gameApi } from '@/lib/api';
 import { GetWerewolfData, ResponseBody, RoleCard, RoomInfo } from '@/lib/types';
 import WaitingPhase from './WaitingPhase';
@@ -33,26 +34,26 @@ export default function WerewolfPhase({ roomInfo, playerId, initialRole }: Werew
         return <WaitingPhase title="⏳ 请稍候" description="等待其他玩家操作中..." />;
     }
 
-    const centerCards = ["Card 1", "Card 2", "Card 3"];
+    const centerCards = ["中央牌 1", "中央牌 2", "中央牌 3"];
 
     return (
         <div className="space-y-4">
-            <p className="text-lg font-bold text-center">🐺 Werewolf Turn</p>
+            <p className="text-lg font-bold text-center">🐺 狼人回合</p>
             {werewolfInfo && werewolfInfo.otherWerewolves.length > 0 ? (
                 <div className="bg-red-500/10 p-6 rounded-lg border-2 border-red-500/30">
-                    <p className="mb-4 text-red-600 font-semibold text-lg">🤝 You have werewolf partners:</p>
+                    <p className="mb-4 text-red-600 font-semibold text-lg">🤝 你有狼人队友：</p>
                     <div className="space-y-3">
                         {werewolfInfo.otherWerewolves.map((index) => (
                             <div key={index} className="p-4 bg-red-500/20 rounded-lg border border-red-500/40">
                                 <div className="font-bold text-xl mb-1">{roomInfo.seats[index]}</div>
-                                <div className="text-sm text-red-600">🔴 Werewolf</div>
+                                <div className="text-sm text-red-600">🔴 狼人</div>
                             </div>
                         ))}
                     </div>
                 </div>
             ) : (
                 <div className="bg-blue-500/10 p-6 rounded-lg border-2 border-blue-500/30">
-                    <p className="mb-4 text-blue-600 font-semibold text-lg">👁️ You are the only werewolf. Choose a center card:</p>
+                    <p className="mb-4 text-blue-600 font-semibold text-lg">👁️ 你是唯一的狼人，选择一张中央牌查看：</p>
                     <div className="flex gap-4 mb-6">
                         {centerCards.map((card, index) => (
                             <div key={index}
@@ -64,7 +65,7 @@ export default function WerewolfPhase({ roomInfo, playerId, initialRole }: Werew
                                 <div className="text-center">
                                     <div className="text-2xl mb-2">🃏</div>
                                     <div className="font-semibold">{card}</div>
-                                    {selectedIndex === index && <div className="text-xs text-primary mt-1">✓ Selected</div>}
+                                    {selectedIndex === index && <div className="text-xs text-primary mt-1">✓ 已选择</div>}
                                 </div>
                             </div>
                         ))}
@@ -77,11 +78,13 @@ export default function WerewolfPhase({ roomInfo, playerId, initialRole }: Werew
                                 setWerewolfInfo({ ...werewolfInfo!, selectedCenterCard: body.data.centerCard });
                                 setSelected(true);
                             }
-                        }}>Confirm Selection</button>
+                        }}>确认选择</button>
                     {werewolfInfo?.selectedCenterCard && (
                         <div className="mt-6 p-4 bg-blue-500/20 rounded-lg border-2 border-blue-500/40">
-                            <p className="text-blue-600 font-semibold mb-2">👁️ The center card is:</p>
-                            <p className="text-3xl font-bold text-blue-600">{werewolfInfo.selectedCenterCard}</p>
+                            <p className="text-blue-600 font-semibold mb-2">👁️ 中央牌是：</p>
+                            <p className="text-3xl font-bold text-blue-600">
+                                {ROLE_CONFIGS[werewolfInfo.selectedCenterCard]?.icon} {ROLE_CONFIGS[werewolfInfo.selectedCenterCard]?.name}
+                            </p>
                         </div>
                     )}
                     {werewolfInfo?.selectedCenterCard && (

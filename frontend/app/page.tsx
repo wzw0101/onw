@@ -51,13 +51,13 @@ export default function Home() {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen gap-6 p-4">
-            <h1 className="text-3xl font-bold text-primary">🐺 One Night Werewolf</h1>
+            <h1 className="text-3xl font-bold text-primary">🐺 一夜狼人杀</h1>
 
             <div className="card bg-base-200 p-6 w-full max-w-sm space-y-4">
                 {/* Player ID */}
                 <div className="flex items-center gap-2">
                     <label className="input input-bordered flex items-center gap-2 flex-1">
-                        Player ID
+                        玩家 ID
                         <input
                             value={playerId}
                             onChange={(e) => setPlayerId(e.target.value)}
@@ -84,7 +84,7 @@ export default function Home() {
                 {playerId && !editPlayer && (
                     <>
                         <label className="input input-bordered flex items-center gap-2">
-                            Room ID
+                            房间 ID
                             <input
                                 value={roomId}
                                 onChange={(e) => setRoomId(e.target.value)}
@@ -98,7 +98,7 @@ export default function Home() {
                                 disabled={!roomId}
                                 onClick={handleJoin}
                             >
-                                Join Room
+                                加入房间
                             </button>
                         </div>
 
@@ -139,9 +139,10 @@ export default function Home() {
                             className="btn btn-secondary w-full"
                             onClick={handleCreate}
                         >
-                            Create Room
+                            创建房间
                         </button>
                     </>
+                )}
                 )}
             </div>
         </div>
