@@ -9,7 +9,10 @@
 
 services:
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      args:
+        MAVEN_SETTINGS: ${MAVEN_SETTINGS:-maven-settings.xml}
     image: ${REGISTRY}/${NAMESPACE}/onw-backend:${IMAGE_TAG:-latest}
     restart: unless-stopped
     environment:

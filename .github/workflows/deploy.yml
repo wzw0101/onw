@@ -37,6 +37,7 @@ jobs:
           REGISTRY: ${{ vars.REGISTRY }}
           NAMESPACE: ${{ vars.NAMESPACE }}
           IMAGE_TAG: ${{ env.IMAGE_TAG }}
+          MAVEN_SETTINGS: settings-ci.xml
         run: |
           docker compose build
           docker compose push
