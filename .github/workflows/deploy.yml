@@ -50,14 +50,16 @@ jobs:
           IMAGE_TAG: ${{ env.IMAGE_TAG }}
           MAVEN_SETTINGS: settings-ci.xml
         run: |
-          docker compose build \
-            --build-arg BUILDKIT_INLINE_CACHE=1 \
-            --set "*.buildx.cache-to=type=local,dest=/tmp/.buildx-cache-new,mode=max" \
-            --set "*.buildx.cache-from=type=local,src=/tmp/.buildx-cache"
+          docker compose build
           docker compose push
-          # 替换缓存目录（保留旧缓存作为 fallback）
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+          # 合并缓存：新缓存覆盖旧缓存，未更新的层保留
+          for svc in backend frontend; do
+            if [ -d /tmp/.buildx-cache-new/$svc ]; then
+              rm -rf /tmp/.buildx-cache/$svc
+              mv /tmp/.buildx-cache-new/$svc /tmp/.buildx-cache/$svc
+            fi
+          done
+          rm -rf /tmp/.buildx-cache-new
 
       - name: Deploy compose file and nginx config
         uses: appleboy/scp-action@v0.1.7
