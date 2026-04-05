@@ -28,10 +28,10 @@ export default function MinionPhase({ roomInfo, playerId, initialRole }: MinionP
 
     return (
         <div className="space-y-4">
-            <p className="text-lg font-bold text-center">Minion Turn</p>
+            <p className="text-lg font-bold text-center">🐾 爪牙回合</p>
             {minionInfo ? (
                 <div className="bg-orange-500/10 p-4 rounded-lg border border-orange-500/30">
-                    <p className="mb-2 text-orange-600 font-semibold">The werewolf is:</p>
+                    <p className="mb-2 text-orange-600 font-semibold">狼人是：</p>
                     {minionInfo.werewolfIndex !== null ? (
                         <div className="p-2 bg-orange-500/20 rounded">{roomInfo.seats[minionInfo.werewolfIndex]}</div>
                     ) : (
@@ -42,7 +42,7 @@ export default function MinionPhase({ roomInfo, playerId, initialRole }: MinionP
                         </div>
                     )}
                 </div>
-            ) : <p>Loading...</p>}
+            ) : <p>加载中...</p>}
             {minionInfo && (
                 <button className="btn btn-success w-full" disabled={turnEnding}
                     onClick={async () => {

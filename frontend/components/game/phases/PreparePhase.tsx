@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { HTTP_PREFIX, PLAYER_COLORS } from '@/lib/constants';
+import { ROLE_CONFIGS } from '@/lib/constants/game';
 import { playerApi } from '@/lib/api';
 import { ResponseBody, RoleCard, RoomInfo, SeatData } from '@/lib/types';
 
@@ -40,7 +41,7 @@ export default function PreparePhase({ roomInfo, playerId, playerSeatNum, initia
             </ul>
 
             <div className="mb-8">
-                <p className="text-sm text-base-content/60 mb-4">Waiting area (click here to leave seat)</p>
+                <p className="text-sm text-base-content/60 mb-4">等候区（点击此处离开座位）</p>
                 <div
                     className={`flex gap-4 p-4 border-2 border-dashed rounded-lg transition-colors
                         ${playerSeatNum >= 0
@@ -67,7 +68,7 @@ export default function PreparePhase({ roomInfo, playerId, playerSeatNum, initia
                             <svg xmlns="http://www.w3.org/2000/svg" className="size-16" viewBox="0 0 24 24" fill="none" strokeWidth={1.5} stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                             </svg>
-                            <span className="ml-2">Click here to return to waiting area</span>
+                            <span className="ml-2">点击此处返回等候区</span>
                         </div>}
                 </div>
             </div>
@@ -75,16 +76,16 @@ export default function PreparePhase({ roomInfo, playerId, playerSeatNum, initia
             <div>
                 {playerSeatNum >= 0 && (
                     <>
-                        <button className="btn btn-primary" onClick={() => setShowRole(!showRole)}>show role</button>
-                        {showRole && initialRole && <div className="mt-2">{initialRole}</div>}
+                        <button className="btn btn-primary" onClick={() => setShowRole(!showRole)}>查看角色</button>
+                        {showRole && initialRole && <div className="mt-2">{ROLE_CONFIGS[initialRole].icon} {ROLE_CONFIGS[initialRole].name}</div>}
                         <button className="btn btn-primary ml-2"
                             onClick={() => playerApi.setReady(playerId, !roomInfo.readyList[playerSeatNum])}>
-                            ready</button>
+                            准备</button>
                     </>
                 )}
                 {roomInfo.hostPlayer === playerId &&
                     <button className="btn btn-primary ml-2"
-                        onClick={() => playerApi.startGame(playerId)}>start</button>}
+                        onClick={() => playerApi.startGame(playerId)}>开始游戏</button>}
             </div>
         </>
     );

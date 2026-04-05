@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "One Night Werewolf",
-  description: "One Night Werewolf Game",
+  title: "一夜狼人杀",
+  description: "一夜狼人杀游戏",
 };
 
 export default function RootLayout({

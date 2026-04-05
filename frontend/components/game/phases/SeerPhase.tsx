@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { ROLE_CONFIGS } from '@/lib/constants/game';
 import { gameApi } from '@/lib/api';
 import { GetSeerData, ResponseBody, RoleCard, RoomInfo } from '@/lib/types';
 import WaitingPhase from './WaitingPhase';
@@ -14,7 +15,7 @@ interface SeerPhaseProps {
 export default function SeerPhase({ roomInfo, playerId, initialRole }: SeerPhaseProps) {
     const [selectedIndex, setSelectedIndex] = React.useState(-1);
     const [selected, setSelected] = React.useState(false);
-    const [seerResult, setSeerResult] = React.useState("");
+    const [seerResult, setSeerResult] = React.useState<RoleCard | null>(null);
     const [turnEnding, setTurnEnding] = React.useState(false);
 
     if (initialRole !== "SEER") {
@@ -23,8 +24,8 @@ export default function SeerPhase({ roomInfo, playerId, initialRole }: SeerPhase
 
     return (
         <div className="space-y-4">
-            <p className="text-lg font-bold text-center">Seer Turn</p>
-            <p className="text-sm text-base-content/60 mb-4">Choose a player to see their role:</p>
+            <p className="text-lg font-bold text-center">🔮 预言家回合</p>
+            <p className="text-sm text-base-content/60 mb-4">选择一名玩家查看其角色：</p>
             <div className="grid grid-cols-4 gap-4 mb-4">
                 {roomInfo.seats.map((seatPlayerId, index) => {
                     if (!seatPlayerId || seatPlayerId === playerId) return null;
@@ -33,7 +34,7 @@ export default function SeerPhase({ roomInfo, playerId, initialRole }: SeerPhase
                             ${selectedIndex === index ? "border-primary bg-primary/20" : "border-base-content/30 hover:border-primary"}`}
                             onClick={() => !selected && setSelectedIndex(index)}>
                             <div className="font-semibold">{seatPlayerId}</div>
-                            {selectedIndex === index && <div className="text-xs text-primary mt-1">Selected</div>}
+                            {selectedIndex === index && <div className="text-xs text-primary mt-1">已选择</div>}
                         </div>
                     );
                 })}
@@ -46,11 +47,11 @@ export default function SeerPhase({ roomInfo, playerId, initialRole }: SeerPhase
                         setSeerResult(body.data.roleCard);
                         setSelected(true);
                     }
-                }}>Confirm</button>
+                }}>确认</button>
             {seerResult && (
                 <div className="bg-blue-500/10 p-4 rounded-lg border border-blue-500/30 mt-4">
-                    <p className="text-blue-600 font-semibold">The role is:</p>
-                    <p className="text-xl font-bold mt-2">{seerResult}</p>
+                    <p className="text-blue-600 font-semibold">该玩家的角色是：</p>
+                    <p className="text-xl font-bold mt-2">{ROLE_CONFIGS[seerResult]?.icon} {ROLE_CONFIGS[seerResult]?.name}</p>
                 </div>
             )}
             {seerResult && (
