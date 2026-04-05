@@ -14,18 +14,32 @@ jobs:
       - name: Login to ACR
         run: echo "${{ secrets.ACR_PASSWORD }}" | docker login ${{ vars.ACR_REGISTRY }} -u "${{ vars.ACR_USERNAME }}" --password-stdin
 
-      - name: Build images
-        run: docker compose build
-
-      - name: Tag and push backend
+      - name: Build and push images
+        env:
+          ACR_REGISTRY: ${{ vars.ACR_REGISTRY }}
         run: |
-          docker tag onw-backend:latest ${{ vars.ACR_REGISTRY }}/onw-backend:latest
-          docker push ${{ vars.ACR_REGISTRY }}/onw-backend:latest
+          docker compose build
+          docker compose push
 
-      - name: Tag and push frontend
-        run: |
-          docker tag onw-frontend:latest ${{ vars.ACR_REGISTRY }}/onw-frontend:latest
-          docker push ${{ vars.ACR_REGISTRY }}/onw-frontend:latest
+      - name: Deploy compose file and nginx config
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ vars.SERVER_IP }}
+          username: root
+          key: ${{ secrets.SSH_KEY }}
+          source: "docker-compose.yml,nginx.conf"
+          target: "/opt/onw/"
+
+      - name: Write .env on server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ vars.SERVER_IP }}
+          username: root
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cat > /opt/onw/.env << 'EOF'
+            ACR_REGISTRY=${{ vars.ACR_REGISTRY }}
+            EOF
 
       - name: Deploy to server
         uses: appleboy/ssh-action@v1
@@ -35,6 +49,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd /opt/onw
-            docker compose -f docker-compose.remote.yml pull
-            docker compose -f docker-compose.remote.yml up -d
+            docker compose pull
+            docker compose up -d
             docker image prune -f

@@ -1,7 +1,15 @@
 # 本地开发: docker compose up --build
+# 服务器部署: docker compose pull && docker compose up -d (需配置 .env)
+#
+# 环境变量:
+#   ACR_REGISTRY         - 镜像仓库地址，如 crpi-xxx.cn-shenzhen.personal.cr.aliyuncs.com/wzw9807
+#                          本地不设则使用默认镜像名，CI/服务器部署时设置为 ACR 地址
+#   NEXT_PUBLIC_API_URL  - 前端 API 地址，默认 localhost:8080
+
 services:
   backend:
     build: ./backend
+    image: ${ACR_REGISTRY:-onw}/onw-backend:latest
     restart: unless-stopped
     environment:
       - JAVA_OPTS=-Xmx512m -Xms256m
@@ -12,12 +20,13 @@ services:
       context: ./frontend
       args:
         NEXT_PUBLIC_API_URL: "${NEXT_PUBLIC_API_URL:-localhost:8080}"
+    image: ${ACR_REGISTRY:-onw}/onw-frontend:latest
     restart: unless-stopped
     depends_on:
       - backend
 
   nginx:
-    image: nginx:alpine
+    image: ${ACR_REGISTRY:-nginx:alpine}
     restart: unless-stopped
     ports:
       - "80:80"
