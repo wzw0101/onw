@@ -26,7 +26,7 @@ services:
       - backend
 
   nginx:
-    image: ${ACR_REGISTRY:-nginx:alpine}
+    image: nginx:alpine
     restart: unless-stopped
     ports:
       - "80:80"
