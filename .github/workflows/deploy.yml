@@ -70,6 +70,7 @@ jobs:
           username: root
           key: ${{ secrets.SSH_KEY }}
           script: |
+            echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login ${{ vars.REGISTRY }} -u ${{ vars.NAMESPACE }} --password-stdin
             cd /opt/onw
             docker compose pull
             docker compose up -d
