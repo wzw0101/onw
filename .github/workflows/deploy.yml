@@ -8,7 +8,7 @@ on:
       target:
         description: 'Target registry environment'
         required: true
-        default: 'dockerhub'
+        default: 'acr'
         type: choice
         options:
           - dockerhub
@@ -17,7 +17,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.target || 'dockerhub' }}
+    environment: ${{ github.event.inputs.target || 'acr' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
