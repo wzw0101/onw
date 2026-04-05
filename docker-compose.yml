@@ -23,6 +23,7 @@ services:
     build:
       context: ./frontend
       args:
+        NPM_REGISTRY: ${NPM_REGISTRY:-https://registry.npmmirror.com}
         NEXT_PUBLIC_API_URL: "${NEXT_PUBLIC_API_URL:-localhost:8080}"
     image: ${REGISTRY}/${NAMESPACE}/onw-frontend:${IMAGE_TAG:-latest}
     restart: unless-stopped
