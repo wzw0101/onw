@@ -25,14 +25,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: docker-buildx-${{ runner.os }}-${{ hashFiles('**/Dockerfile', '**/package-lock.json', '**/pom.xml') }}
-          restore-keys: |
-            docker-buildx-${{ runner.os }}-
-
       - name: Login to registry
         uses: docker/login-action@v3
         with:
@@ -50,34 +42,11 @@ jobs:
           IMAGE_TAG: ${{ env.IMAGE_TAG }}
           MAVEN_SETTINGS: settings-ci.xml
         run: |
-          # 确保缓存目录存在
-          mkdir -p /tmp/.buildx-cache /tmp/.buildx-cache-new
-
-          # 构建 backend
-          docker buildx build \
-            --cache-from type=local,src=/tmp/.buildx-cache/backend \
-            --cache-to type=local,dest=/tmp/.buildx-cache-new/backend,mode=max \
-            --build-arg MAVEN_SETTINGS=$MAVEN_SETTINGS \
-            -t $REGISTRY/$NAMESPACE/onw-backend:$IMAGE_TAG \
-            --push \
-            ./backend
-
-          # 构建 frontend
-          docker buildx build \
-            --cache-from type=local,src=/tmp/.buildx-cache/frontend \
-            --cache-to type=local,dest=/tmp/.buildx-cache-new/frontend,mode=max \
-            -t $REGISTRY/$NAMESPACE/onw-frontend:$IMAGE_TAG \
-            --push \
-            ./frontend
-
-          # 合并缓存
           for svc in backend frontend; do
-            if [ -d /tmp/.buildx-cache-new/$svc ]; then
-              rm -rf /tmp/.buildx-cache/$svc
-              mv /tmp/.buildx-cache-new/$svc /tmp/.buildx-cache/$svc
-            fi
+            docker compose build --push $svc \
+              --set "${svc}.cache-from=type=registry,ref=${REGISTRY}/${NAMESPACE}/onw-${svc}:cache" \
+              --set "${svc}.cache-to=type=registry,ref=${REGISTRY}/${NAMESPACE}/onw-${svc}:cache,mode=max"
           done
-          rm -rf /tmp/.buildx-cache-new
 
       - name: Deploy compose file and nginx config
         uses: appleboy/scp-action@v0.1.7
