@@ -44,8 +44,8 @@ jobs:
         run: |
           for svc in backend frontend; do
             docker compose build --push $svc \
-              --set "${svc}.cache-from=type=registry,ref=${REGISTRY}/${NAMESPACE}/onw-${svc}:cache" \
-              --set "${svc}.cache-to=type=registry,ref=${REGISTRY}/${NAMESPACE}/onw-${svc}:cache,mode=max"
+              --set "${svc}.cache-from=type=gha" \
+              --set "${svc}.cache-to=type=gha,mode=max"
           done
 
       - name: Deploy compose file and nginx config
