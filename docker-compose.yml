@@ -5,7 +5,6 @@
 #   REGISTRY             - 镜像仓库服务地址（必填），如 docker.io、ghcr.io、crpi-xxx.aliyuncs.com
 #   NAMESPACE            - 镜像命名空间/用户名（必填），如 wzw9807
 #   IMAGE_TAG            - 镜像标签，默认为 latest，CI 建议使用 Git commit hash
-#   NEXT_PUBLIC_API_URL  - 前端 API 地址，默认 localhost:8080
 
 services:
   backend:
@@ -24,7 +23,6 @@ services:
       context: ./frontend
       args:
         NPM_REGISTRY: ${NPM_REGISTRY:-}
-        NEXT_PUBLIC_API_URL: "${NEXT_PUBLIC_API_URL:-localhost:8080}"
     image: ${REGISTRY}/${NAMESPACE}/onw-frontend:${IMAGE_TAG:-latest}
     restart: unless-stopped
     depends_on:
