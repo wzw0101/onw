@@ -158,11 +158,11 @@ public class OnwController {
         }
         Room room = roomManager.lookup(player.getRoomId());
         if (room == null) {
-            return null;
+            return ApiResponse.fail("room not exist");
         }
         if (room.getGameStateMachine().getCurrentState() != GameState.MINION_TURN) {
             log.info("player {} game is not in minion turn", userId);
-            return null;
+            return ApiResponse.fail("game is not in minion turn");
         }
         int werewolfIndex = room.getPlayerCards().indexOf(RoleCard.WEREWOLF);
         return ApiResponse.success(GetMinionData.builder().werewolfIndex(werewolfIndex).build());
