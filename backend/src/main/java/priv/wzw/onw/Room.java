@@ -166,32 +166,45 @@ public class Room {
 
     public VoteDistributionDTO getVoteDistribution() {
         // 计算每个座位的得票数
-        List<Integer> voteCounts = new ArrayList<>(seats.size());
-        for (int i = 0; i < seats.size(); i += 1) {
-            voteCounts.add(0);
-        }
-        for (int i = 0; i < votes.size(); i += 1) {
-            int target = votes.get(i).get();
+        List<Integer> voteCounts = new ArrayList<>(Collections.nCopies(seats.size(), 0));
+        for (AtomicInteger vote : votes) {
+            int target = vote.get();
             if (target >= 0 && target < voteCounts.size()) {
                 voteCounts.set(target, voteCounts.get(target) + 1);
             }
         }
 
-        // 找出得票最多的玩家
-        int maxCount = -1;
-        int maxCountTarget = -1;
-        for (int i = 0; i < voteCounts.size(); i += 1) {
-            if (voteCounts.get(i) > maxCount) {
-                maxCount = voteCounts.get(i);
-                maxCountTarget = i;
+        // 找出最高票数
+        int maxCount = voteCounts.stream().mapToInt(Integer::intValue).max().orElse(0);
+
+        // 平票规则：最高票数 > 1 时所有最高票玩家同时被处决，否则无人死亡（狼人胜）
+        List<String> executedPlayers = new ArrayList<>();
+        if (maxCount > 1) {
+            for (int i = 0; i < voteCounts.size(); i++) {
+                if (voteCounts.get(i) == maxCount && seats.get(i) != null) {
+                    executedPlayers.add(seats.get(i));
+                }
             }
         }
 
-        String mostVotedPlayer = maxCountTarget >= 0 ? seats.get(maxCountTarget) : null;
+        // 判断胜负：处决玩家中有狼人 → 村民胜
+        boolean villagerWin = false;
+        for (String executedPlayer : executedPlayers) {
+            int seatIndex = seats.indexOf(executedPlayer);
+            if (seatIndex >= 0 && seatIndex < playerCards.size()
+                    && playerCards.get(seatIndex) == RoleCard.WEREWOLF) {
+                villagerWin = true;
+                break;
+            }
+        }
+
+        String mostVotedPlayer = executedPlayers.isEmpty() ? null : executedPlayers.get(0);
 
         return VoteDistributionDTO.builder()
                 .mostVotedPlayer(mostVotedPlayer)
                 .voteCounts(voteCounts)
+                .executedPlayers(executedPlayers)
+                .villagerWin(villagerWin)
                 .build();
     }
 }

@@ -47,10 +47,26 @@ export default function GameOverPhase({ roomInfo, playerId }: GameOverPhaseProps
     // 找出最大票数用于柱状图缩放
     const maxVotes = Math.max(...voteDistribution.voteCounts, 0);
     const maxVotesForScale = maxVotes === 0 ? 1 : maxVotes;  // 避免除以0
+    const executedSet = new Set(voteDistribution.executedPlayers);
 
     return (
         <div className="space-y-6">
             <p className="text-lg font-bold text-center">🏁 游戏结束</p>
+
+            {/* 胜负结果 */}
+            {voteDistribution.villagerWin ? (
+                <div className="bg-green-500/10 p-4 rounded-lg border border-green-500/30 text-center">
+                    <p className="text-green-500 text-2xl font-bold">村民阵营胜利！</p>
+                    <p className="text-sm text-base-content/60 mt-1">狼人被处决了</p>
+                </div>
+            ) : (
+                <div className="bg-red-500/10 p-4 rounded-lg border border-red-500/30 text-center">
+                    <p className="text-red-500 text-2xl font-bold">狼人阵营胜利！</p>
+                    <p className="text-sm text-base-content/60 mt-1">
+                        {voteDistribution.executedPlayers.length === 0 ? '没有玩家被处决' : '处决的玩家中没有狼人'}
+                    </p>
+                </div>
+            )}
 
             {/* 投票结果柱状图 */}
             <div className="space-y-4">
@@ -60,7 +76,7 @@ export default function GameOverPhase({ roomInfo, playerId }: GameOverPhaseProps
                         if (!seatPlayerId) return null;
                         const voteCount = voteDistribution.voteCounts[index];
                         const barWidth = (voteCount / maxVotesForScale) * 100;
-                        const isMostVoted = seatPlayerId === voteDistribution.mostVotedPlayer;
+                        const isExecuted = executedSet.has(seatPlayerId);
                         const isSelf = seatPlayerId === playerId;
 
                         return (
@@ -75,9 +91,7 @@ export default function GameOverPhase({ roomInfo, playerId }: GameOverPhaseProps
                                 <div className="flex-1 flex items-center">
                                     <div
                                         className={`h-8 rounded-l-md transition-all ${
-                                            isMostVoted
-                                                ? 'bg-primary'
-                                                : 'bg-neutral'
+                                            isExecuted ? 'bg-error' : 'bg-neutral'
                                         }`}
                                         style={{ width: `${barWidth}%` }}
                                     />
@@ -89,10 +103,10 @@ export default function GameOverPhase({ roomInfo, playerId }: GameOverPhaseProps
                                     )}
                                 </div>
 
-                                {/* 最高票标识 */}
-                                {isMostVoted && (
-                                    <span className="text-sm text-primary font-semibold">
-                                        👑 最高票
+                                {/* 处决标识 */}
+                                {isExecuted && (
+                                    <span className="text-sm text-error font-semibold">
+                                        ☠️ 被处决
                                     </span>
                                 )}
                             </div>
@@ -101,11 +115,13 @@ export default function GameOverPhase({ roomInfo, playerId }: GameOverPhaseProps
                 </div>
             </div>
 
-            {/* 得票最多的玩家 */}
-            {voteDistribution.mostVotedPlayer && (
+            {/* 被处决的玩家列表 */}
+            {voteDistribution.executedPlayers.length > 0 && (
                 <div className="bg-red-500/10 p-4 rounded-lg border border-red-500/30">
-                    <p className="text-red-600 font-semibold mb-2">被处决的玩家:</p>
-                    <p className="text-2xl font-bold">{voteDistribution.mostVotedPlayer}</p>
+                    <p className="text-red-600 font-semibold mb-2">
+                        被处决的玩家{voteDistribution.executedPlayers.length > 1 ? '（平票）' : ''}:
+                    </p>
+                    <p className="text-2xl font-bold">{voteDistribution.executedPlayers.join('、')}</p>
                 </div>
             )}
 
