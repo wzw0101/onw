@@ -38,8 +38,10 @@ export default function VotePhase({ roomInfo, playerId }: VotePhaseProps) {
                 <button disabled={selected || selectedIndex < 0} className="btn btn-primary"
                     onClick={async () => {
                         if (selected || selectedIndex < 0) return;
-                        await gameApi.vote(playerId, selectedIndex);
-                        setSelected(true);
+                        const res = await gameApi.vote(playerId, selectedIndex);
+                        if (res.code === 0) {
+                            setSelected(true);
+                        }
                     }}>确认投票</button>
                 {roomInfo.hostPlayer === playerId && (
                     <button className="btn btn-secondary"
