@@ -12,4 +12,6 @@ export interface RoomChangedMessageBody {
 export interface VoteDistribution {
     mostVotedPlayer: string | null;
     voteCounts: number[];  // 每个座位的得票数
+    executedPlayers: string[];  // 所有被处决的玩家（平票时多人）
+    villagerWin: boolean;  // 村民阵营是否获胜
 }
