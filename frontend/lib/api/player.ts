@@ -1,7 +1,10 @@
 import { apiClient } from './client';
-import type { SeatData, ResponseBody } from '../types';
+import type { SeatData, ResponseBody, RoomInfo } from '../types';
 
 export const playerApi = {
+    getRoom: (playerId: string) =>
+        apiClient.get<RoomInfo>(`/player/${playerId}/room`),
+
     takeSeat: (playerId: string, seatIndex: number) =>
         apiClient.post<SeatData>(`/player/${playerId}/seat/${seatIndex}`),
 
