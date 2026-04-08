@@ -123,10 +123,11 @@ public class GameTransitionConfig {
                 gameContext -> {
                     List<RoleCard> centerCards = gameContext.getRoom().getCenterCards();
                     List<RoleCard> playerCards = gameContext.getRoom().getPlayerCards();
-                    RoleCard temp = centerCards.get(gameContext.getDrunkCenterIndex());
+                    int centerIdx = gameContext.getDrunkCenterIndex();
+                    RoleCard temp = centerCards.get(centerIdx);
                     int drunkIndex = playerCards.indexOf(RoleCard.DRUNK);
                     playerCards.set(drunkIndex, temp);
-                    centerCards.set(drunkIndex, RoleCard.DRUNK);
+                    centerCards.set(centerIdx, RoleCard.DRUNK);
                 });
     }
 

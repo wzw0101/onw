@@ -217,8 +217,13 @@ public class OnwController {
             return ApiResponse.fail("can not rob yourself");
         }
 
+        int robberIndex = room.getPlayerCards().indexOf(RoleCard.ROBBER);
+        if (robberIndex < 0) {
+            log.error("robber card not found in player cards for room {}", room.getId());
+            return ApiResponse.fail("robber card not found");
+        }
         RoleCard robbedRoleCard = room.getPlayerCards().get(cardIndex);
-        Collections.swap(room.getPlayerCards(), cardIndex, room.getPlayerCards().indexOf(RoleCard.ROBBER));
+        Collections.swap(room.getPlayerCards(), cardIndex, robberIndex);
         RobberData data = RobberData.builder().roleCard(robbedRoleCard).build();
         return ApiResponse.success(data);
     }
@@ -318,11 +323,19 @@ public class OnwController {
             log.info("player {} game is not in voting turn", userId);
             return;
         }
-        if (targetPlayerIndex < 0 || targetPlayerIndex >= room.getSelectedCards().size()) {
+        if (targetPlayerIndex < 0 || targetPlayerIndex >= room.getSeats().size()) {
             log.info("voted target index {} invalid", targetPlayerIndex);
             return;
         }
         int seatNum = room.getSeats().indexOf(voter.getUserId());
+        if (seatNum < 0) {
+            log.info("player {} is not seated", userId);
+            return;
+        }
+        if (seatNum == targetPlayerIndex) {
+            log.info("player {} tried to vote for themselves", userId);
+            return;
+        }
         room.getVotes().get(seatNum).compareAndSet(-1, targetPlayerIndex);
     }
 
