@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { roomApi } from '@/lib/api';
+import { roomApi, playerApi } from '@/lib/api';
 import { RoleCard } from '@/lib/types';
 import { ROLE_CONFIGS } from '@/lib/constants/game';
 
@@ -25,6 +25,15 @@ export default function Home() {
 
     function removeCard(index: number) {
         setSelectedCards(prev => prev.filter((_, i) => i !== index));
+    }
+
+    async function handleConfirmPlayerId() {
+        setEditPlayer(false);
+        if (!playerId) return;
+        const body = await playerApi.getRoom(playerId);
+        if (body.code === 0 && body.data) {
+            router.push(`/room/${body.data.id}?player=${encodeURIComponent(playerId)}`);
+        }
     }
 
     async function handleJoin() {
@@ -69,7 +78,7 @@ export default function Home() {
                         <input
                             className="peer"
                             type="checkbox"
-                            onClick={() => setEditPlayer(!editPlayer)}
+                            onClick={() => editPlayer ? handleConfirmPlayerId() : setEditPlayer(true)}
                         />
                         <svg className="size-6 swap-off" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
