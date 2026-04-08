@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { roomApi, playerApi } from '@/lib/api';
+import { roomApi } from '@/lib/api';
 import { RoleCard } from '@/lib/types';
 import { ROLE_CONFIGS } from '@/lib/constants/game';
 
@@ -30,9 +30,9 @@ export default function Home() {
     async function handleConfirmPlayerId() {
         setEditPlayer(false);
         if (!playerId) return;
-        const body = await playerApi.getRoom(playerId);
+        const body = await roomApi.get(playerId);
         if (body.code === 0 && body.data) {
-            router.push(`/room/${body.data.id}?player=${encodeURIComponent(playerId)}`);
+            router.push(`/room/${body.data.roomId}?player=${encodeURIComponent(playerId)}`);
         }
     }
 
