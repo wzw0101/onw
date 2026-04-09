@@ -2,7 +2,7 @@ import type { PlayerColor } from './common';
 import { GamePhase } from './game';
 
 export interface RoomInfo {
-    id: string;
+    roomId: string;
     players: Set<string>;
     seats: Array<string>;
     readyList: Array<boolean>;
